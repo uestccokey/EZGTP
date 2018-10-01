@@ -13,7 +13,6 @@ public class GtpClient {
     private GtpEngine mBlackEngine;
     private GtpEngine mWhiteEngine;
 
-    private Thread mPlayThread;
     private volatile boolean mIsRunning;
     private volatile boolean mIsPause;
 
@@ -41,63 +40,66 @@ public class GtpClient {
     }
 
     public void start() {
-        if (mPlayThread == null) {
-            mPlayThread = new Thread() {
-                @Override
-                public void run() {
-                    boolean bConnected = mBlackEngine.connect();
-                    if (mGtpListener != null) {
-                        mGtpListener.onStart(bConnected, true);
-                    }
-                    boolean wConnected = mWhiteEngine.connect();
-                    if (mGtpListener != null) {
-                        mGtpListener.onStart(wConnected, false);
-                    }
-                    Point bMove = null;
-                    Point wMove = null;
-                    while (mIsRunning) {
-                        if (!mIsPause) {
-                            if (wMove != null) {
-                                mBlackEngine.playMove(wMove, false);
-                                if (mGtpListener != null) {
-                                    mGtpListener.onPlayMove(wMove, false);
-                                }
+        if (mIsRunning) {
+            return;
+        }
+        new Thread() {
+            @Override
+            public void run() {
+                boolean bConnected = mBlackEngine.connect();
+                if (mGtpListener != null) {
+                    mGtpListener.onStart(bConnected, true);
+                }
+                boolean wConnected = mWhiteEngine.connect();
+                if (mGtpListener != null) {
+                    mGtpListener.onStart(wConnected, false);
+                }
+                Point bMove = null;
+                Point wMove = null;
+                while (mIsRunning) {
+                    if (!mIsPause) {
+                        if (wMove != null) {
+                            mBlackEngine.playMove(wMove, false);
+                            if (mGtpListener != null) {
+                                mGtpListener.onPlayMove(wMove, false);
                             }
-                            if (!isResign(wMove)) {
-                                bMove = mBlackEngine.genMove(true);
-                                if (mGtpListener != null) {
-                                    mGtpListener.onGenMove(bMove, true);
-                                }
+                        }
+                        if (!isResign(wMove)) {
+                            bMove = mBlackEngine.genMove(true);
+                            if (mGtpListener != null) {
+                                mGtpListener.onGenMove(bMove, true);
                             }
-                            if (bMove != null) {
-                                mWhiteEngine.playMove(bMove, true);
-                                if (mGtpListener != null) {
-                                    mGtpListener.onPlayMove(bMove, true);
-                                }
+                        }
+                        if (bMove != null) {
+                            mWhiteEngine.playMove(bMove, true);
+                            if (mGtpListener != null) {
+                                mGtpListener.onPlayMove(bMove, true);
                             }
-                            if (!isResign(bMove)) {
-                                wMove = mWhiteEngine.genMove(false);
-                                if (mGtpListener != null) {
-                                    mGtpListener.onGenMove(wMove, false);
-                                }
+                        }
+                        if (!isResign(bMove)) {
+                            wMove = mWhiteEngine.genMove(false);
+                            if (mGtpListener != null) {
+                                mGtpListener.onGenMove(wMove, false);
                             }
-                        } else {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
-            };
-            mPlayThread.start();
-            mIsRunning = true;
-            mIsPause = false;
-        }
+            }
+        }.start();
+        mIsRunning = true;
+        mIsPause = false;
     }
 
     public void resume() {
+        if (!mIsPause || !mIsRunning) {
+            return;
+        }
         mIsPause = false;
 
         if (mGtpListener != null) {
@@ -109,6 +111,9 @@ public class GtpClient {
     }
 
     public void pause() {
+        if (mIsPause || !mIsRunning) {
+            return;
+        }
         mIsPause = true;
 
         if (mGtpListener != null) {
@@ -120,6 +125,9 @@ public class GtpClient {
     }
 
     public void stop() {
+        if (!mIsRunning) {
+            return;
+        }
         mIsPause = true;
         mIsRunning = false;
 
