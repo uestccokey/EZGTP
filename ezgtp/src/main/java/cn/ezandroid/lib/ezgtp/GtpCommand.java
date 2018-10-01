@@ -1,7 +1,7 @@
 package cn.ezandroid.lib.ezgtp;
 
 /**
- * Gtp命令
+ * Gtp命令枚举
  * <p>
  * http://www.lysator.liu.se/~gunnar/gtp/
  *
@@ -16,10 +16,10 @@ public enum GtpCommand {
 
     BOARD_SIZE("boardsize"), // 设置棋盘大小
     KOMI("komi"), // 设置贴目
-    TIME_SETTINGS("time_settings"), // 设置用时
+    TIME_SETTINGS("time_settings"), // 设置时限
 
     PLAY("play"), // 落子
-    GENMOVE("genmove"), // 命令AI落子
+    GEN_MOVE("genmove"), // 命令AI落子
     UNDO("undo"), // 悔棋
 
     SHOW_BOARD("showboard"), // 显示棋盘
