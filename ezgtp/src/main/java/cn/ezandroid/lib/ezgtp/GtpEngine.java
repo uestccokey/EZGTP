@@ -18,7 +18,7 @@ public abstract class GtpEngine {
     protected float mKomi = 7.5f;
 
     /**
-     * 连接引擎
+     * 连接引擎（耗时操作，需要在异步线程执行）
      *
      * @return
      */
@@ -77,12 +77,26 @@ public abstract class GtpEngine {
         return send(GtpCommand.TIME_SETTINGS.cmd("0", String.valueOf(time), "1"));
     }
 
+    /**
+     * 落子
+     *
+     * @param point
+     * @param isBlack
+     * @return
+     */
     public String playMove(Point point, boolean isBlack) {
         return send(GtpCommand.PLAY.cmd(color(isBlack), GtpUtil.point2Coordinate(point, mBoardSize)));
     }
 
+    /**
+     * 命令AI落子（耗时操作，需要在异步线程执行）
+     *
+     * @param isBlack
+     * @return
+     */
     public Point genMove(boolean isBlack) {
-        return GtpUtil.coordinate2Point(send(GtpCommand.GEN_MOVE.cmd(color(isBlack))), mBoardSize);
+        String move = send(GtpCommand.GEN_MOVE.cmd(color(isBlack)));
+        return GtpUtil.coordinate2Point(move.substring(move.indexOf(' ') + 1).trim(), mBoardSize);
     }
 
     public String showBoard() {

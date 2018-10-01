@@ -14,6 +14,7 @@ import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
 import cn.ezandroid.lib.ezgtp.GtpEngine;
+import cn.ezandroid.lib.ezgtp.GtpUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsCurrentBlack = true;
     private LeelaZeroEngine mLeelaZeroEngine;
     private boolean mIsConnected;
+    private boolean mIsThinking;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         mBoardView = findViewById(R.id.board);
         mBoardView.setOnTouchListener((v, event) -> {
             Intersection nearest = mBoardView.getNearestIntersection(event.getX(), event.getY());
-            if (nearest != null && mIsConnected) {
+            if (nearest != null && mIsConnected && !mIsThinking) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         Intersection highlight = mBoardView.getHighlightIntersection();
@@ -43,11 +45,44 @@ public class MainActivity extends AppCompatActivity {
 
                                 mBoardView.addStone(stone);
                                 mBoardView.setHighlightIntersection(null);
+                                mBoardView.setHighlightStone(stone);
                                 mIsCurrentBlack = !mIsCurrentBlack;
 
-                                SoundManager.getInstance().playSound(MainActivity.this, mBoardView.getGoTheme().mSoundEffect.mMove);
+                                SoundManager.getInstance().playSound(MainActivity.this,
+                                        mBoardView.getGoTheme().mSoundEffect.mMove);
 
                                 mLeelaZeroEngine.showBoard();
+
+                                mIsThinking = true;
+
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        Point point = mLeelaZeroEngine.genMove(mIsCurrentBlack);
+
+                                        runOnUiThread(
+                                                () -> {
+                                                    if (point.x != GtpUtil.PASS_POS
+                                                            && point.x != GtpUtil.RESIGN_POS) {
+                                                        Stone stone1 = new Stone();
+                                                        stone1.color = mIsCurrentBlack ? StoneColor.BLACK : StoneColor.WHITE;
+                                                        stone1.intersection = new Intersection(point.x, point.y);
+
+                                                        mBoardView.addStone(stone1);
+                                                        mBoardView.setHighlightIntersection(null);
+                                                        mBoardView.setHighlightStone(stone1);
+                                                        mIsCurrentBlack = !mIsCurrentBlack;
+
+                                                        SoundManager.getInstance().playSound(MainActivity.this,
+                                                                mBoardView.getGoTheme().mSoundEffect.mMove);
+                                                    }
+                                                    mLeelaZeroEngine.showBoard();
+
+                                                    mIsThinking = false;
+                                                }
+                                        );
+                                    }
+                                }.start();
                             }
                             return false;
                         } else {
@@ -70,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mIsConnected = mLeelaZeroEngine.connect();
+                if (mIsConnected) {
+                    mLeelaZeroEngine.setBoardSize(19);
+                    mLeelaZeroEngine.setKomi(7.5f);
+                    mLeelaZeroEngine.timeSettings(5);
+                }
             }
         }.start();
     }

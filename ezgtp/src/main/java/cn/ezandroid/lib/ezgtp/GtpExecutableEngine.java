@@ -36,14 +36,13 @@ public abstract class GtpExecutableEngine extends GtpEngine {
             String[] processArgs = new String[len + 1];
             processArgs[0] = getExecutableFile().getAbsolutePath();
             System.arraycopy(args, 0, processArgs, 1, len);
-            for (String arg : args) {
-                Log.e("Engine", "connect:" + arg);
-            }
             mProcess = new ProcessBuilder(processArgs).start();
 
-            Log.e(TAG, "Connect:" + Arrays.toString(processArgs));
+            Log.e(TAG, "Connect Success:" + Arrays.toString(processArgs));
         } catch (IOException e) {
             e.printStackTrace();
+
+            Log.e(TAG, "Connect Fail:" + Arrays.toString(args));
             return false;
         }
 
@@ -85,6 +84,7 @@ public abstract class GtpExecutableEngine extends GtpEngine {
     @Override
     public String send(String command) {
         try {
+            Log.e(TAG, "Send: " + command);
             mWriter.write(command + "\n");
             mWriter.flush();
             String res;
