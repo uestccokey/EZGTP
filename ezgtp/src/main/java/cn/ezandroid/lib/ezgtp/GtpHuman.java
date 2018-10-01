@@ -13,29 +13,23 @@ import java.util.concurrent.CountDownLatch;
 public class GtpHuman extends GtpEngine {
 
     private CountDownLatch mLatch;
+    private boolean mIsBlack;
     private Point mWaitPlayMove;
 
     @Override
-    public boolean connect(String... args) {
-        return true;
-    }
-
-    @Override
-    public String send(String command) {
-        return "=";
-    }
-
-    @Override
-    public void disconnect() {
-    }
-
-    public void setWaitPlayMove(Point playMove) {
-        mWaitPlayMove = playMove;
-        mLatch.countDown();
+    public String playMove(Point point, boolean isBlack) {
+        if (mIsBlack == isBlack) {
+            mWaitPlayMove = point;
+            if (mLatch != null) {
+                mLatch.countDown();
+            }
+        }
+        return super.playMove(point, isBlack);
     }
 
     @Override
     public Point genMove(boolean isBlack) {
+        mIsBlack = isBlack;
         try {
             mLatch = new CountDownLatch(1);
             mLatch.await();

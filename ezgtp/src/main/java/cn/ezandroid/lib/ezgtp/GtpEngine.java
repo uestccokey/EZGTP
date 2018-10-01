@@ -22,7 +22,9 @@ public abstract class GtpEngine {
      *
      * @return
      */
-    public abstract boolean connect(String... args);
+    public boolean connect(String... args) {
+        return true;
+    }
 
     /**
      * 发送命令
@@ -30,12 +32,15 @@ public abstract class GtpEngine {
      * @param command
      * @return
      */
-    public abstract String send(String command);
+    public String send(String command) {
+        return "= ";
+    }
 
     /**
      * 断开连接
      */
-    public abstract void disconnect();
+    public void disconnect() {
+    }
 
     public static boolean success(String response) {
         return !TextUtils.isEmpty(response) && response.charAt(0) == '=';
@@ -99,10 +104,20 @@ public abstract class GtpEngine {
         return GtpUtil.coordinate2Point(move.substring(move.indexOf(' ') + 1).trim(), mBoardSize);
     }
 
+    /**
+     * 显示棋盘
+     *
+     * @return
+     */
     public String showBoard() {
         return send(GtpCommand.SHOW_BOARD.cmd());
     }
 
+    /**
+     * 清空棋盘
+     *
+     * @return
+     */
     public String clearBoard() {
         return send(GtpCommand.CLEAR_BOARD.cmd());
     }

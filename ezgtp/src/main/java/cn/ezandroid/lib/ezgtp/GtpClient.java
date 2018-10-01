@@ -3,7 +3,7 @@ package cn.ezandroid.lib.ezgtp;
 import android.graphics.Point;
 
 /**
- * GtpClient
+ * Gtp客户端
  *
  * @author like
  * @date 2018-10-01
@@ -28,6 +28,14 @@ public class GtpClient {
         mGtpListener = listener;
     }
 
+    public boolean isRunning() {
+        return mIsRunning;
+    }
+
+    public boolean isPause() {
+        return mIsPause;
+    }
+
     private boolean isResign(Point point) {
         return point != null && point.x == GtpUtil.RESIGN_POS;
     }
@@ -38,22 +46,12 @@ public class GtpClient {
                 @Override
                 public void run() {
                     boolean bConnected = mBlackEngine.connect();
-                    if (bConnected) {
-                        mBlackEngine.setBoardSize(19);
-                        mBlackEngine.setKomi(7.5f);
-                        mBlackEngine.timeSettings(5);
-                    }
                     if (mGtpListener != null) {
-                        mGtpListener.onConnected(bConnected, true);
+                        mGtpListener.onStart(bConnected, true);
                     }
                     boolean wConnected = mWhiteEngine.connect();
-                    if (wConnected) {
-                        mWhiteEngine.setBoardSize(19);
-                        mWhiteEngine.setKomi(7.5f);
-                        mWhiteEngine.timeSettings(5);
-                    }
                     if (mGtpListener != null) {
-                        mGtpListener.onConnected(wConnected, false);
+                        mGtpListener.onStart(wConnected, false);
                     }
                     Point bMove = null;
                     Point wMove = null;
@@ -61,6 +59,9 @@ public class GtpClient {
                         if (!mIsPause) {
                             if (wMove != null) {
                                 mBlackEngine.playMove(wMove, false);
+                                if (mGtpListener != null) {
+                                    mGtpListener.onPlayMove(wMove, false);
+                                }
                             }
                             if (!isResign(wMove)) {
                                 bMove = mBlackEngine.genMove(true);
@@ -70,6 +71,9 @@ public class GtpClient {
                             }
                             if (bMove != null) {
                                 mWhiteEngine.playMove(bMove, true);
+                                if (mGtpListener != null) {
+                                    mGtpListener.onPlayMove(bMove, true);
+                                }
                             }
                             if (!isResign(bMove)) {
                                 wMove = mWhiteEngine.genMove(false);
@@ -95,14 +99,37 @@ public class GtpClient {
 
     public void resume() {
         mIsPause = false;
+
+        if (mGtpListener != null) {
+            mGtpListener.onResume(true);
+        }
+        if (mGtpListener != null) {
+            mGtpListener.onResume(false);
+        }
     }
 
     public void pause() {
         mIsPause = true;
+
+        if (mGtpListener != null) {
+            mGtpListener.onPause(true);
+        }
+        if (mGtpListener != null) {
+            mGtpListener.onPause(false);
+        }
     }
 
     public void stop() {
         mIsPause = true;
         mIsRunning = false;
+
+        mBlackEngine.disconnect();
+        if (mGtpListener != null) {
+            mGtpListener.onStop(true);
+        }
+        mWhiteEngine.disconnect();
+        if (mGtpListener != null) {
+            mGtpListener.onStop(false);
+        }
     }
 }

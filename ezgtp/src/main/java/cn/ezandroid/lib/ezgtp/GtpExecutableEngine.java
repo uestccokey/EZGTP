@@ -101,7 +101,7 @@ public abstract class GtpExecutableEngine extends GtpEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return "? ";
     }
 
     @Override

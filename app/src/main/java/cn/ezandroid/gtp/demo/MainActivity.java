@@ -1,6 +1,7 @@
 package cn.ezandroid.gtp.demo;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import cn.ezandroid.lib.board.theme.WoodTheme;
 import cn.ezandroid.lib.ezgtp.GtpClient;
 import cn.ezandroid.lib.ezgtp.GtpHuman;
 import cn.ezandroid.lib.ezgtp.GtpListener;
+import cn.ezandroid.lib.ezgtp.GtpUtil;
 
 public class MainActivity extends AppCompatActivity implements GtpListener {
 
@@ -25,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     private boolean mIsConnected;
     private boolean mIsThinking;
 
-    private GtpHuman mGtpHuman;
-    private LeelaZeroEngine mLeelaZeroEngine;
+    private GtpHuman mBlackHuman;
+    private LeelaZeroEngine mWhiteLeela;
     private GtpClient mGtpClient;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                     case MotionEvent.ACTION_DOWN:
                         Intersection highlight = mBoardView.getHighlightIntersection();
                         if (nearest.equals(highlight)) {
-                            mGtpHuman.setWaitPlayMove(new Point(highlight.x, highlight.y));
+                            mBlackHuman.playMove(new Point(highlight.x, highlight.y), true);
 
                             Stone stone = new Stone();
                             stone.color = mIsCurrentBlack ? StoneColor.BLACK : StoneColor.WHITE;
@@ -74,23 +76,43 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         });
         mBoardView.setGoTheme(new WoodTheme(new GoTheme.DrawableCache(this, (int) Runtime.getRuntime().maxMemory() / 32)));
 
-        mGtpHuman = new GtpHuman();
-        mLeelaZeroEngine = new LeelaZeroEngine(this);
-        mGtpClient = new GtpClient(mGtpHuman, mLeelaZeroEngine);
+        findViewById(R.id.two_gtp).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TwoGtpActivity.class);
+            startActivity(intent);
+        });
+
+        mBlackHuman = new GtpHuman();
+        mWhiteLeela = new LeelaZeroEngine(this);
+        mGtpClient = new GtpClient(mBlackHuman, mWhiteLeela);
         mGtpClient.setGtpListener(this);
         mGtpClient.start();
     }
 
     @Override
-    public void onConnected(boolean isSuccess, boolean isBlack) {
+    public void onStart(boolean isSuccess, boolean isBlack) {
         if (!isBlack) {
             mIsConnected = isSuccess;
+
+            if (isSuccess) {
+                mWhiteLeela.setBoardSize(19);
+                mWhiteLeela.setKomi(7.5f);
+                mWhiteLeela.timeSettings(5);
+            }
+        } else {
+            if (isSuccess) {
+                mBlackHuman.setBoardSize(19);
+                mBlackHuman.setKomi(7.5f);
+                mBlackHuman.timeSettings(5);
+            }
         }
     }
 
     @Override
     public void onGenMove(Point move, boolean isBlack) {
         if (!isBlack) {
+            if (move.x == GtpUtil.PASS_POS || move.x == GtpUtil.RESIGN_POS) {
+                return;
+            }
             runOnUiThread(() -> {
                 Stone stone = new Stone();
                 stone.color = mIsCurrentBlack ? StoneColor.BLACK : StoneColor.WHITE;
@@ -107,5 +129,11 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                 mIsThinking = false;
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGtpClient.stop();
     }
 }
