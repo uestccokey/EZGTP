@@ -37,11 +37,11 @@ public abstract class GtpEngine {
      */
     public abstract void disconnect();
 
-    protected boolean success(String response) {
+    public static boolean success(String response) {
         return !TextUtils.isEmpty(response) && response.charAt(0) == '=';
     }
 
-    protected String color(boolean isBlack) {
+    public static String color(boolean isBlack) {
         return isBlack ? BLACK_NAME : WHITE_NAME;
     }
 
@@ -83,6 +83,14 @@ public abstract class GtpEngine {
 
     public Point genMove(boolean isBlack) {
         return GtpUtil.coordinate2Point(send(GtpCommand.GEN_MOVE.cmd(color(isBlack))), mBoardSize);
+    }
+
+    public String showBoard() {
+        return send(GtpCommand.SHOW_BOARD.cmd());
+    }
+
+    public String clearBoard() {
+        return send(GtpCommand.CLEAR_BOARD.cmd());
     }
 
     /**

@@ -36,7 +36,10 @@ public abstract class GtpExecutableEngine extends GtpEngine {
             String[] processArgs = new String[len + 1];
             processArgs[0] = getExecutableFile().getAbsolutePath();
             System.arraycopy(args, 0, processArgs, 1, len);
-            mProcess = new ProcessBuilder(args).start();
+            for (String arg : args) {
+                Log.e("Engine", "connect:" + arg);
+            }
+            mProcess = new ProcessBuilder(processArgs).start();
 
             Log.e(TAG, "Connect:" + Arrays.toString(processArgs));
         } catch (IOException e) {
