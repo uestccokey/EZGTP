@@ -4,7 +4,7 @@ import android.graphics.Point;
 import android.text.TextUtils;
 
 /**
- * Gtp引擎
+ * Gtp引擎的基类
  *
  * @author like
  * @date 2018-10-01
@@ -22,7 +22,7 @@ public abstract class GtpEngine {
      *
      * @return
      */
-    public abstract boolean connect();
+    public abstract boolean connect(String... args);
 
     /**
      * 发送命令
