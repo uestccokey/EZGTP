@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 
 import cn.ezandroid.lib.board.BoardView;
 import cn.ezandroid.lib.board.Intersection;
@@ -31,6 +32,8 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
     private LeelaZeroProgram mWhiteLeela;
     private GtpGame mGtpGame;
 
+    private Button mPauseButton;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +43,14 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
         mBoardView = findViewById(R.id.board);
         mBoardView.setGoTheme(new WoodTheme(new GoTheme.DrawableCache(this, (int) Runtime.getRuntime().maxMemory() / 32)));
 
-        findViewById(R.id.pause).setOnClickListener(v -> {
+        mPauseButton = findViewById(R.id.pause);
+        mPauseButton.setOnClickListener(v -> {
             if (mGtpGame.isPause()) {
                 mGtpGame.resume();
+                mPauseButton.setText("Pause");
             } else {
                 mGtpGame.pause();
+                mPauseButton.setText("Resume");
             }
         });
 

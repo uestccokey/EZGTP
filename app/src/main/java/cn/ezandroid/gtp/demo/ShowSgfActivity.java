@@ -2,7 +2,6 @@ package cn.ezandroid.gtp.demo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ViewTreeObserver;
 
 import java.io.IOException;
@@ -35,8 +34,6 @@ public class ShowSgfActivity extends AppCompatActivity {
 
         mBoardView = findViewById(R.id.board);
         mBoardView.setGoTheme(new WoodTheme(new GoTheme.DrawableCache(this, (int) Runtime.getRuntime().maxMemory() / 32)));
-
-        Log.e("ShowSgf", "onCreate:" + mMoveList.size());
 
         mBoardView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
