@@ -5,20 +5,20 @@ import android.graphics.Point;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * GtpHuman
+ * 用于将人类落子转换为Gtp命令
  *
  * @author like
  * @date 2018-10-01
  */
-public class GtpHuman extends GtpEngine {
+public class GtpHuman extends GtpClient {
 
     private CountDownLatch mLatch;
-    private boolean mIsBlack;
+    private boolean mIsPlayBlack;
     private Point mWaitPlayMove;
 
     @Override
     public String playMove(Point point, boolean isBlack) {
-        if (mIsBlack == isBlack) {
+        if (mIsPlayBlack == isBlack) {
             mWaitPlayMove = point;
             if (mLatch != null) {
                 mLatch.countDown();
@@ -29,7 +29,7 @@ public class GtpHuman extends GtpEngine {
 
     @Override
     public Point genMove(boolean isBlack) {
-        mIsBlack = isBlack;
+        mIsPlayBlack = isBlack;
         try {
             mLatch = new CountDownLatch(1);
             mLatch.await();

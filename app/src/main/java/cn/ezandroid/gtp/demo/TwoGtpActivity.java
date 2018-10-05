@@ -12,7 +12,7 @@ import cn.ezandroid.lib.board.StoneColor;
 import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
-import cn.ezandroid.lib.ezgtp.GtpClient;
+import cn.ezandroid.lib.ezgtp.GtpGame;
 import cn.ezandroid.lib.ezgtp.GtpListener;
 import cn.ezandroid.lib.ezgtp.GtpUtil;
 
@@ -27,9 +27,9 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
     private BoardView mBoardView;
     private boolean mIsCurrentBlack = true;
 
-    private LeelaZeroEngine mBlackLeela;
-    private LeelaZeroEngine mWhiteLeela;
-    private GtpClient mGtpClient;
+    private LeelaZeroProgram mBlackLeela;
+    private LeelaZeroProgram mWhiteLeela;
+    private GtpGame mGtpGame;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -41,18 +41,18 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
         mBoardView.setGoTheme(new WoodTheme(new GoTheme.DrawableCache(this, (int) Runtime.getRuntime().maxMemory() / 32)));
 
         findViewById(R.id.pause).setOnClickListener(v -> {
-            if (mGtpClient.isPause()) {
-                mGtpClient.resume();
+            if (mGtpGame.isPause()) {
+                mGtpGame.resume();
             } else {
-                mGtpClient.pause();
+                mGtpGame.pause();
             }
         });
 
-        mBlackLeela = new LeelaZeroEngine(this);
-        mWhiteLeela = new LeelaZeroEngine(this);
-        mGtpClient = new GtpClient(mBlackLeela, mWhiteLeela);
-        mGtpClient.setGtpListener(this);
-        mGtpClient.start();
+        mBlackLeela = new LeelaZeroProgram(this);
+        mWhiteLeela = new LeelaZeroProgram(this);
+        mGtpGame = new GtpGame(mBlackLeela, mWhiteLeela);
+        mGtpGame.setGtpListener(this);
+        mGtpGame.start();
     }
 
     @Override
@@ -95,6 +95,6 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mGtpClient.stop();
+        mGtpGame.stop();
     }
 }

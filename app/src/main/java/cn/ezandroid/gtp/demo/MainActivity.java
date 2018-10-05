@@ -17,7 +17,7 @@ import cn.ezandroid.lib.board.StoneColor;
 import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
-import cn.ezandroid.lib.ezgtp.GtpClient;
+import cn.ezandroid.lib.ezgtp.GtpGame;
 import cn.ezandroid.lib.ezgtp.GtpHuman;
 import cn.ezandroid.lib.ezgtp.GtpListener;
 import cn.ezandroid.lib.ezgtp.GtpUtil;
@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     private boolean mIsThinking;
 
     private GtpHuman mBlackHuman;
-    private LeelaZeroEngine mWhiteLeela;
-    private GtpClient mGtpClient;
+    private LeelaZeroProgram mWhiteLeela;
+    private GtpGame mGtpGame;
 
     private List<SGFReader.Move> mMoveList;
 
@@ -108,10 +108,10 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                         }
 
                         mBlackHuman = new GtpHuman();
-                        mWhiteLeela = new LeelaZeroEngine(MainActivity.this);
-                        mGtpClient = new GtpClient(mBlackHuman, mWhiteLeela);
-                        mGtpClient.setGtpListener(MainActivity.this);
-                        mGtpClient.start();
+                        mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
+                        mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
+                        mGtpGame.setGtpListener(MainActivity.this);
+                        mGtpGame.start();
                     });
                 } catch (IOException | SGFException e) {
                     e.printStackTrace();
@@ -180,6 +180,6 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mGtpClient.stop();
+        mGtpGame.stop();
     }
 }

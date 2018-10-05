@@ -11,14 +11,14 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 /**
- * 可执行的Gtp引擎的基类
+ * Gtp程序基类
  *
  * @author like
  * @date 2018-10-01
  */
-public abstract class GtpExecutableEngine extends GtpEngine {
+public abstract class GtpProgram extends GtpClient {
 
-    private static final String TAG = "GtpExecutableEngine";
+    private static final String TAG = "GtpProgram";
 
     private Process mProcess;
 

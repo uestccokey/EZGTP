@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import cn.ezandroid.lib.ezgtp.GtpExecutableEngine;
+import cn.ezandroid.lib.ezgtp.GtpProgram;
 
 /**
  * 里拉引擎
@@ -20,7 +20,7 @@ import cn.ezandroid.lib.ezgtp.GtpExecutableEngine;
  * @author like
  * @date 2018-06-06
  */
-public class LeelaZeroEngine extends GtpExecutableEngine {
+public class LeelaZeroProgram extends GtpProgram {
 
     private static final int EXE_VERSION = 180918;
     private static final String KEY_EXE_VERSION = "leelaz_version";
@@ -31,7 +31,7 @@ public class LeelaZeroEngine extends GtpExecutableEngine {
     private File mEngineFile;
     private File mWeightFile;
 
-    public LeelaZeroEngine(Context context) {
+    public LeelaZeroProgram(Context context) {
         mContext = context;
         mContextDir = mContext.getDir("engines", Context.MODE_PRIVATE);
         mWeightFile = new File(mContextDir, "weight.txt");
