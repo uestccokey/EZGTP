@@ -1,5 +1,6 @@
 package cn.ezandroid.gtp.demo;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewTreeObserver;
@@ -39,7 +40,11 @@ public class ShowSgfActivity extends AppCompatActivity {
 
             @Override
             public void onGlobalLayout() {
-                mBoardView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mBoardView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    mBoardView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
 
                 new Thread() {
                     @Override
