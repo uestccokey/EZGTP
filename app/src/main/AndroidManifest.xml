@@ -21,7 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TwoGtpActivity" />
+        <activity
+            android:name=".TwoGtpActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name=".ShowSgfActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
     </application>
 
 </manifest>

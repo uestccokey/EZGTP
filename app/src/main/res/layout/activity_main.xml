@@ -6,7 +6,7 @@
     <cn.ezandroid.lib.board.BoardView
         android:id="@+id/board"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/two_gtp"
@@ -14,4 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/board"
         android:text="Two Gtp" />
+
+    <Button
+        android:id="@+id/show_sgf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/board"
+        android:layout_toRightOf="@+id/two_gtp"
+        android:text="Show Sgf" />
 </RelativeLayout>

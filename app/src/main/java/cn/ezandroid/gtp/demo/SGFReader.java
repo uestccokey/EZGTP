@@ -2,6 +2,7 @@ package cn.ezandroid.gtp.demo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,9 @@ import cn.ezandroid.lib.sgf.tokens.WhiteNameToken;
  */
 public class SGFReader {
 
-    public static class Move {
+    public static class Move implements Serializable {
+        private static final long serialVersionUID = 42L;
+
         Point mPosition;
         boolean mIsBlack;
     }

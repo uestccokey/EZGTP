@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 
-import java.io.IOException;
 import java.util.List;
 
 import cn.ezandroid.lib.board.BoardView;
@@ -21,7 +20,6 @@ import cn.ezandroid.lib.ezgtp.GtpGame;
 import cn.ezandroid.lib.ezgtp.GtpHuman;
 import cn.ezandroid.lib.ezgtp.GtpListener;
 import cn.ezandroid.lib.ezgtp.GtpUtil;
-import cn.ezandroid.lib.sgf.SGFException;
 
 public class MainActivity extends AppCompatActivity implements GtpListener {
 
@@ -87,37 +85,16 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
             startActivity(intent);
         });
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    mMoveList = SGFReader.readFromSGF(getResources().openRawResource(R.raw.test));
-                    runOnUiThread(() -> {
-                        if (mMoveList != null && !mMoveList.isEmpty()) {
-                            for (SGFReader.Move move : mMoveList) {
-                                Stone stone = new Stone();
-                                stone.color = move.mIsBlack ? StoneColor.BLACK : StoneColor.WHITE;
-                                stone.intersection = new Intersection(move.mPosition.x, move.mPosition.y);
+        findViewById(R.id.show_sgf).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ShowSgfActivity.class);
+            startActivity(intent);
+        });
 
-                                mBoardView.addStone(stone);
-                                mBoardView.setHighlightIntersection(null);
-                                mBoardView.setHighlightStone(stone);
-                            }
-
-                            mIsCurrentBlack = !mMoveList.get(mMoveList.size() - 1).mIsBlack;
-                        }
-
-                        mBlackHuman = new GtpHuman();
-                        mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
-                        mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
-                        mGtpGame.setGtpListener(MainActivity.this);
-                        mGtpGame.start();
-                    });
-                } catch (IOException | SGFException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+        mBlackHuman = new GtpHuman();
+        mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
+        mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
+        mGtpGame.setGtpListener(MainActivity.this);
+        mGtpGame.start();
     }
 
     @Override
@@ -128,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
             if (isSuccess) {
                 mWhiteLeela.setBoardSize(19);
                 mWhiteLeela.setKomi(7.5f);
-                mWhiteLeela.timeSettings(5);
+                mWhiteLeela.timeSettings(2);
 
                 if (mMoveList != null && !mMoveList.isEmpty()) {
                     for (SGFReader.Move move : mMoveList) {
@@ -141,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
             if (isSuccess) {
                 mBlackHuman.setBoardSize(19);
                 mBlackHuman.setKomi(7.5f);
-                mBlackHuman.timeSettings(5);
+                mBlackHuman.timeSettings(2);
 
                 if (mMoveList != null && !mMoveList.isEmpty()) {
                     for (SGFReader.Move move : mMoveList) {

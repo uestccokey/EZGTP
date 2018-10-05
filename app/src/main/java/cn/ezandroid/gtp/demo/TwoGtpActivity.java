@@ -61,13 +61,13 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpListener {
             if (isSuccess) {
                 mWhiteLeela.setBoardSize(19);
                 mWhiteLeela.setKomi(7.5f);
-                mWhiteLeela.timeSettings(5);
+                mWhiteLeela.timeSettings(2);
             }
         } else {
             if (isSuccess) {
                 mBlackLeela.setBoardSize(19);
                 mBlackLeela.setKomi(7.5f);
-                mBlackLeela.timeSettings(5);
+                mBlackLeela.timeSettings(2);
             }
         }
     }
