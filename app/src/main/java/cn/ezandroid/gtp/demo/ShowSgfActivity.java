@@ -1,6 +1,5 @@
 package cn.ezandroid.gtp.demo;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -70,17 +69,5 @@ public class ShowSgfActivity extends AppCompatActivity {
                 }.start();
             }
         });
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.e("ShowSgf", "onConfigurationChanged LANDSCAPE " + mMoveList.size());
-
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Log.e("ShowSgf", "onConfigurationChanged PORTRAIT " + mMoveList.size());
-
-        }
     }
 }

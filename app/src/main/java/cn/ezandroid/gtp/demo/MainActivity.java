@@ -2,12 +2,13 @@ package cn.ezandroid.gtp.demo;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
-
-import java.util.List;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import cn.ezandroid.lib.board.BoardView;
 import cn.ezandroid.lib.board.Intersection;
@@ -29,11 +30,11 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     private boolean mIsConnected;
     private boolean mIsThinking;
 
+    private LinearLayout mToolbar;
+
     private GtpHuman mBlackHuman;
     private LeelaZeroProgram mWhiteLeela;
     private GtpGame mGtpGame;
-
-    private List<SGFReader.Move> mMoveList;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         });
         mBoardView.setGoTheme(new WoodTheme(new GoTheme.DrawableCache(this, (int) Runtime.getRuntime().maxMemory() / 32)));
 
+        mToolbar = findViewById(R.id.tool_bar);
+
         findViewById(R.id.two_gtp).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, TwoGtpActivity.class);
             startActivity(intent);
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
         mGtpGame.setGtpListener(MainActivity.this);
         mGtpGame.start();
+
+        updateLayoutOrientation(getResources().getConfiguration());
     }
 
     @Override
@@ -106,26 +111,12 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                 mWhiteLeela.setBoardSize(19);
                 mWhiteLeela.setKomi(7.5f);
                 mWhiteLeela.timeSettings(2);
-
-                if (mMoveList != null && !mMoveList.isEmpty()) {
-                    for (SGFReader.Move move : mMoveList) {
-                        mWhiteLeela.playMove(new Point(move.mPosition.x, move.mPosition.y), move.mIsBlack);
-                    }
-                    mWhiteLeela.showBoard();
-                }
             }
         } else {
             if (isSuccess) {
                 mBlackHuman.setBoardSize(19);
                 mBlackHuman.setKomi(7.5f);
                 mBlackHuman.timeSettings(2);
-
-                if (mMoveList != null && !mMoveList.isEmpty()) {
-                    for (SGFReader.Move move : mMoveList) {
-                        mBlackHuman.playMove(new Point(move.mPosition.x, move.mPosition.y), move.mIsBlack);
-                    }
-                    mBlackHuman.showBoard();
-                }
             }
         }
     }
@@ -152,6 +143,24 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                 mIsThinking = false;
             });
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateLayoutOrientation(newConfig);
+    }
+
+    private void updateLayoutOrientation(Configuration configuration) {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            params.removeRule(RelativeLayout.BELOW);
+            params.addRule(RelativeLayout.RIGHT_OF, R.id.board);
+        } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            params.removeRule(RelativeLayout.RIGHT_OF);
+            params.addRule(RelativeLayout.BELOW, R.id.board);
+        }
+        mToolbar.setLayoutParams(params);
     }
 
     @Override
