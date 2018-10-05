@@ -154,10 +154,10 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     private void updateLayoutOrientation(Configuration configuration) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            params.removeRule(RelativeLayout.BELOW);
+            params.addRule(RelativeLayout.BELOW, 0);
             params.addRule(RelativeLayout.RIGHT_OF, R.id.board);
         } else if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            params.removeRule(RelativeLayout.RIGHT_OF);
+            params.addRule(RelativeLayout.RIGHT_OF, 0);
             params.addRule(RelativeLayout.BELOW, R.id.board);
         }
         mToolbar.setLayoutParams(params);
