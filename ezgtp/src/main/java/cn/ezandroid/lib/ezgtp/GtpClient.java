@@ -2,6 +2,7 @@ package cn.ezandroid.lib.ezgtp;
 
 import android.graphics.Point;
 import android.text.TextUtils;
+import android.util.Pair;
 
 /**
  * Gtp客户端基类
@@ -19,6 +20,29 @@ public abstract class GtpClient {
     protected int mBoardSize = 19;
     protected float mKomi = 7.5f;
 
+    private final GtpLogQueue<Pair<String, Integer>> mLogQueue = new GtpLogQueue<>(256);
+    private GtpLogListener mLogListener;
+
+    public void setGtpLogListener(GtpLogListener logListener) {
+        mLogListener = logListener;
+    }
+
+    public GtpLogQueue<Pair<String, Integer>> getLogQueue() {
+        return mLogQueue;
+    }
+
+    protected void addLog(Pair<String, Integer> log) {
+        synchronized (mLogQueue) {
+            mLogQueue.offer(log);
+        }
+    }
+
+    protected void notifyLogUpdated() {
+        if (mLogListener != null) {
+            mLogListener.onGtpLogUpdated(this, mLogQueue);
+        }
+    }
+
     /**
      * 连接引擎（耗时操作，需要在异步线程执行）
      *
@@ -35,13 +59,20 @@ public abstract class GtpClient {
      * @return
      */
     public String send(String command) {
-        return "= ";
+        addLog(new Pair<>(command, GtpLogListener.TYPE_REQUEST));
+        notifyLogUpdated();
+
+        String response = "= ";
+        addLog(new Pair<>(response, GtpLogListener.TYPE_RESPONSE));
+        notifyLogUpdated();
+        return response;
     }
 
     /**
      * 断开连接
      */
     public void disconnect() {
+        mLogListener = null;
     }
 
     public static boolean success(String response) {

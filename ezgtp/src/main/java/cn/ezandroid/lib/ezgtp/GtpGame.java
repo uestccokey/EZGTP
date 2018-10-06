@@ -71,7 +71,9 @@ public class GtpGame {
                     }
                     if (!isResign(wMove)) {
                         bMove = mBlackClient.genMove(true);
+
                         checkLock();
+
                         if (mGtpListener != null) {
                             mGtpListener.onGenMove(bMove, true);
                         }
@@ -87,7 +89,9 @@ public class GtpGame {
                     }
                     if (!isResign(bMove)) {
                         wMove = mWhiteClient.genMove(false);
+
                         checkLock();
+
                         if (mGtpListener != null) {
                             mGtpListener.onGenMove(wMove, false);
                         }

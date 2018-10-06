@@ -1,6 +1,7 @@
 package cn.ezandroid.lib.ezgtp;
 
 import android.util.Log;
+import android.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,11 +39,11 @@ public abstract class GtpProgram extends GtpClient {
             System.arraycopy(args, 0, processArgs, 1, len);
             mProcess = new ProcessBuilder(processArgs).start();
 
-            Log.e(TAG, "Connect Success:" + Arrays.toString(processArgs));
+            Log.e(TAG, "Program Connect Success:" + Arrays.toString(processArgs));
         } catch (IOException e) {
             e.printStackTrace();
 
-            Log.e(TAG, "Connect Fail:" + Arrays.toString(args));
+            Log.e(TAG, "Program Connect Fail:" + Arrays.toString(args));
             return false;
         }
 
@@ -72,29 +73,33 @@ public abstract class GtpProgram extends GtpClient {
                 if (ep != null) {
                     ep.waitFor();
                 }
-                Log.w(TAG, "Engine Exit!");
+                Log.w(TAG, "Program Exit!");
             } catch (InterruptedException ignored) {
             }
         });
         mWaitThread.start();
-        Log.w(TAG, "Engine Start!");
+        Log.w(TAG, "Program Start!");
         return true;
     }
 
     @Override
     public String send(String command) {
         try {
-            Log.e(TAG, "Send: " + command);
+            Log.e(TAG, "Program Send: " + command);
             mWriter.write(command + "\n");
             mWriter.flush();
+            addLog(new Pair<>(command, GtpLogListener.TYPE_REQUEST));
+            notifyLogUpdated();
             String res;
             char ch;
             do {
                 res = mReader.readLine();
                 if (res == null) {
-                    throw new IOException("Process Exception!");
+                    throw new IOException("Program Exception!");
                 }
                 Log.d(TAG, ": " + res);
+                addLog(new Pair<>(res, GtpLogListener.TYPE_RESPONSE));
+                notifyLogUpdated();
                 ch = res.length() > 0 ? res.charAt(0) : 0;
             } while (ch != '=' && ch != '?');
             return res;
@@ -106,9 +111,24 @@ public abstract class GtpProgram extends GtpClient {
 
     @Override
     public void disconnect() {
+        super.disconnect();
         if (mProcess != null) {
             mProcess.destroy();
         }
-        Log.e(TAG, "Disconnect");
+        if (mReader != null) {
+            try {
+                mReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (mWriter != null) {
+            try {
+                mWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e(TAG, "Program Disconnect");
     }
 }
