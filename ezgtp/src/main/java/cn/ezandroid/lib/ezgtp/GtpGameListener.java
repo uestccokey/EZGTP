@@ -8,7 +8,7 @@ package cn.ezandroid.lib.ezgtp;
  */
 public interface GtpGameListener {
 
-    default void onStart(boolean isSuccess, boolean isBlack) {
+    default void onStart(boolean isBlack) {
     }
 
     default void onResume(boolean isBlack) {
@@ -18,5 +18,8 @@ public interface GtpGameListener {
     }
 
     default void onStop(boolean isBlack) {
+    }
+
+    default void onFail(boolean isBlack) {
     }
 }

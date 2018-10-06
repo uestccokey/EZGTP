@@ -130,21 +130,17 @@ public class MainActivity extends AppCompatActivity implements GtpGameListener, 
         }
     }
 
-    public void onStart(boolean isSuccess, boolean isBlack) {
+    public void onStart(boolean isBlack) {
         if (!isBlack) {
-            mIsConnected = isSuccess;
+            mIsConnected = true;
 
-            if (isSuccess) {
-                mWhiteLeela.setBoardSize(19);
-                mWhiteLeela.setKomi(7.5f);
-                mWhiteLeela.timeSettings(2);
-            }
+            mWhiteLeela.setBoardSize(19);
+            mWhiteLeela.setKomi(7.5f);
+            mWhiteLeela.timeSettings(2);
         } else {
-            if (isSuccess) {
-                mBlackHuman.setBoardSize(19);
-                mBlackHuman.setKomi(7.5f);
-                mBlackHuman.timeSettings(2);
-            }
+            mBlackHuman.setBoardSize(19);
+            mBlackHuman.setKomi(7.5f);
+            mBlackHuman.timeSettings(2);
         }
     }
 

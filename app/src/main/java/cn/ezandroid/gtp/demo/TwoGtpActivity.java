@@ -64,19 +64,15 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpGameListener
     }
 
     @Override
-    public void onStart(boolean isSuccess, boolean isBlack) {
+    public void onStart(boolean isBlack) {
         if (!isBlack) {
-            if (isSuccess) {
-                mWhiteLeela.setBoardSize(19);
-                mWhiteLeela.setKomi(7.5f);
-                mWhiteLeela.timeSettings(2);
-            }
+            mWhiteLeela.setBoardSize(19);
+            mWhiteLeela.setKomi(7.5f);
+            mWhiteLeela.timeSettings(2);
         } else {
-            if (isSuccess) {
-                mBlackLeela.setBoardSize(19);
-                mBlackLeela.setKomi(7.5f);
-                mBlackLeela.timeSettings(2);
-            }
+            mBlackLeela.setBoardSize(19);
+            mBlackLeela.setKomi(7.5f);
+            mBlackLeela.timeSettings(2);
         }
     }
 

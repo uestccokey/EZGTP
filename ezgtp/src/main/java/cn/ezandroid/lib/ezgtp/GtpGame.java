@@ -52,11 +52,21 @@ public class GtpGame {
             public void run() {
                 boolean bConnected = mBlackClient.connect();
                 if (mGtpGameListener != null) {
-                    mGtpGameListener.onStart(bConnected, true);
+                    if (bConnected) {
+                        mGtpGameListener.onStart(true);
+                    } else {
+                        mGtpGameListener.onFail(true);
+                        return;
+                    }
                 }
                 boolean wConnected = mWhiteClient.connect();
                 if (mGtpGameListener != null) {
-                    mGtpGameListener.onStart(wConnected, false);
+                    if (wConnected) {
+                        mGtpGameListener.onStart(false);
+                    } else {
+                        mGtpGameListener.onFail(false);
+                        return;
+                    }
                 }
                 Point bMove = null;
                 Point wMove = null;
