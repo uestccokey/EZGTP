@@ -21,14 +21,15 @@ import cn.ezandroid.lib.board.StoneColor;
 import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
+import cn.ezandroid.lib.ezgtp.GtpClientListener;
 import cn.ezandroid.lib.ezgtp.GtpGame;
+import cn.ezandroid.lib.ezgtp.GtpGameListener;
 import cn.ezandroid.lib.ezgtp.GtpHuman;
-import cn.ezandroid.lib.ezgtp.GtpListener;
 import cn.ezandroid.lib.ezgtp.GtpLogListener;
 import cn.ezandroid.lib.ezgtp.GtpLogQueue;
 import cn.ezandroid.lib.ezgtp.GtpUtil;
 
-public class MainActivity extends AppCompatActivity implements GtpListener {
+public class MainActivity extends AppCompatActivity implements GtpGameListener, GtpClientListener {
 
     private static final int UPDATE_LOG_DELAY = 500;
 
@@ -80,19 +81,6 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
                         Intersection highlight = mBoardView.getHighlightIntersection();
                         if (nearest.equals(highlight)) {
                             mBlackHuman.playMove(new Point(highlight.x, highlight.y), true);
-
-                            Stone stone = new Stone();
-                            stone.color = mIsCurrentBlack ? StoneColor.BLACK : StoneColor.WHITE;
-                            stone.intersection = highlight;
-
-                            mBoardView.addStone(stone);
-                            mBoardView.setHighlightIntersection(null);
-                            mBoardView.setHighlightStone(stone);
-                            mIsCurrentBlack = !mIsCurrentBlack;
-
-                            SoundManager.getInstance().playSound(MainActivity.this,
-                                    mBoardView.getGoTheme().mSoundEffect.mMove);
-
                             mIsThinking = true;
                             return false;
                         } else {
@@ -125,8 +113,9 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         mBlackHuman = new GtpHuman();
         mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
         mWhiteLeela.setGtpLogListener((gtpClient, logQueue) -> updateLog());
+        mWhiteLeela.setGtpClientListener(this);
         mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
-        mGtpGame.setGtpListener(MainActivity.this);
+        mGtpGame.setGtpGameListener(MainActivity.this);
         mGtpGame.start();
 
         updateLayoutOrientation(getResources().getConfiguration());
@@ -160,27 +149,45 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     }
 
     @Override
-    public void onGenMove(Point move, boolean isBlack) {
-        if (!isBlack) {
-            if (move.x == GtpUtil.PASS_POS || move.x == GtpUtil.RESIGN_POS) {
-                return;
-            }
-            runOnUiThread(() -> {
-                Stone stone = new Stone();
-                stone.color = mIsCurrentBlack ? StoneColor.BLACK : StoneColor.WHITE;
-                stone.intersection = new Intersection(move.x, move.y);
-
-                mBoardView.addStone(stone);
-                mBoardView.setHighlightIntersection(null);
-                mBoardView.setHighlightStone(stone);
-                mIsCurrentBlack = !mIsCurrentBlack;
-
-                SoundManager.getInstance().playSound(MainActivity.this,
-                        mBoardView.getGoTheme().mSoundEffect.mMove);
-
-                mIsThinking = false;
-            });
+    public void onPlayMove(Point move, boolean isBlack) {
+        if (move.x == GtpUtil.PASS_POS || move.x == GtpUtil.RESIGN_POS) {
+            return;
         }
+        runOnUiThread(() -> {
+            Stone stone = new Stone();
+            stone.color = isBlack ? StoneColor.BLACK : StoneColor.WHITE;
+            stone.intersection = new Intersection(move.x, move.y);
+
+            mBoardView.addStone(stone);
+            mBoardView.setHighlightIntersection(null);
+            mBoardView.setHighlightStone(stone);
+            mIsCurrentBlack = !mIsCurrentBlack;
+
+            SoundManager.getInstance().playSound(MainActivity.this,
+                    mBoardView.getGoTheme().mSoundEffect.mMove);
+        });
+    }
+
+    @Override
+    public void onGenMove(Point move, boolean isBlack) {
+        if (move.x == GtpUtil.PASS_POS || move.x == GtpUtil.RESIGN_POS) {
+            return;
+        }
+        runOnUiThread(() -> {
+            Stone stone = new Stone();
+            stone.color = isBlack ? StoneColor.BLACK : StoneColor.WHITE;
+            stone.intersection = new Intersection(move.x, move.y);
+
+            mBoardView.addStone(stone);
+            mBoardView.setHighlightIntersection(null);
+            mBoardView.setHighlightStone(stone);
+            mIsCurrentBlack = !mIsCurrentBlack;
+
+            SoundManager.getInstance().playSound(MainActivity.this,
+                    mBoardView.getGoTheme().mSoundEffect.mMove);
+
+            mIsThinking = false;
+        });
     }
 
     @Override

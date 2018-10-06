@@ -18,7 +18,7 @@ public class GtpGame {
     private volatile boolean mIsRunning;
     private volatile boolean mIsPause;
 
-    private GtpListener mGtpListener;
+    private GtpGameListener mGtpGameListener;
 
     private final Object mPauseLock = new Object();
 
@@ -27,8 +27,8 @@ public class GtpGame {
         mWhiteClient = whiteClient;
     }
 
-    public void setGtpListener(GtpListener listener) {
-        mGtpListener = listener;
+    public void setGtpGameListener(GtpGameListener listener) {
+        mGtpGameListener = listener;
     }
 
     public boolean isRunning() {
@@ -51,12 +51,12 @@ public class GtpGame {
             @Override
             public void run() {
                 boolean bConnected = mBlackClient.connect();
-                if (mGtpListener != null) {
-                    mGtpListener.onStart(bConnected, true);
+                if (mGtpGameListener != null) {
+                    mGtpGameListener.onStart(bConnected, true);
                 }
                 boolean wConnected = mWhiteClient.connect();
-                if (mGtpListener != null) {
-                    mGtpListener.onStart(wConnected, false);
+                if (mGtpGameListener != null) {
+                    mGtpGameListener.onStart(wConnected, false);
                 }
                 Point bMove = null;
                 Point wMove = null;
@@ -65,36 +65,34 @@ public class GtpGame {
 
                     if (wMove != null) {
                         mBlackClient.playMove(wMove, false);
-                        if (mGtpListener != null) {
-                            mGtpListener.onPlayMove(wMove, false);
-                        }
+
+                        checkLock();
+
+                        mBlackClient.onPlayMove(wMove, false);
                     }
                     if (!isResign(wMove)) {
                         bMove = mBlackClient.genMove(true);
 
                         checkLock();
 
-                        if (mGtpListener != null) {
-                            mGtpListener.onGenMove(bMove, true);
-                        }
+                        mBlackClient.onGenMove(bMove, true);
                     }
 
                     checkLock();
 
                     if (bMove != null) {
                         mWhiteClient.playMove(bMove, true);
-                        if (mGtpListener != null) {
-                            mGtpListener.onPlayMove(bMove, true);
-                        }
+
+                        checkLock();
+
+                        mWhiteClient.onPlayMove(bMove, true);
                     }
                     if (!isResign(bMove)) {
                         wMove = mWhiteClient.genMove(false);
 
                         checkLock();
 
-                        if (mGtpListener != null) {
-                            mGtpListener.onGenMove(wMove, false);
-                        }
+                        mWhiteClient.onGenMove(wMove, false);
                     }
                 }
             }
@@ -131,11 +129,11 @@ public class GtpGame {
         mIsPause = false;
         checkUnlock();
 
-        if (mGtpListener != null) {
-            mGtpListener.onResume(true);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onResume(true);
         }
-        if (mGtpListener != null) {
-            mGtpListener.onResume(false);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onResume(false);
         }
     }
 
@@ -145,11 +143,11 @@ public class GtpGame {
         }
         mIsPause = true;
 
-        if (mGtpListener != null) {
-            mGtpListener.onPause(true);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onPause(true);
         }
-        if (mGtpListener != null) {
-            mGtpListener.onPause(false);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onPause(false);
         }
     }
 
@@ -162,12 +160,12 @@ public class GtpGame {
         checkUnlock();
 
         mBlackClient.disconnect();
-        if (mGtpListener != null) {
-            mGtpListener.onStop(true);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onStop(true);
         }
         mWhiteClient.disconnect();
-        if (mGtpListener != null) {
-            mGtpListener.onStop(false);
+        if (mGtpGameListener != null) {
+            mGtpGameListener.onStop(false);
         }
     }
 }
