@@ -47,6 +47,10 @@ public class GtpGame {
         if (mIsRunning) {
             return;
         }
+        mIsRunning = true;
+        mIsPause = false;
+        checkUnlock();
+
         new Thread() {
             @Override
             public void run() {
@@ -55,6 +59,8 @@ public class GtpGame {
                     if (bConnected) {
                         mGtpGameListener.onStart(true);
                     } else {
+                        GtpGame.this.stop();
+
                         mGtpGameListener.onFail(true);
                         return;
                     }
@@ -64,6 +70,8 @@ public class GtpGame {
                     if (wConnected) {
                         mGtpGameListener.onStart(false);
                     } else {
+                        GtpGame.this.stop();
+
                         mGtpGameListener.onFail(false);
                         return;
                     }
@@ -107,9 +115,6 @@ public class GtpGame {
                 }
             }
         }.start();
-        mIsRunning = true;
-        mIsPause = false;
-        checkUnlock();
     }
 
     private void checkLock() {

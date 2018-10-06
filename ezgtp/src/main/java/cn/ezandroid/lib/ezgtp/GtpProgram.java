@@ -75,8 +75,8 @@ public abstract class GtpProgram extends GtpClient {
                 Process ep = mProcess;
                 if (ep != null) {
                     ep.waitFor();
+                    Log.w(TAG, "Program Exit!");
                 }
-                Log.w(TAG, "Program Exit!");
             } catch (InterruptedException ignored) {
             }
         });
@@ -117,7 +117,7 @@ public abstract class GtpProgram extends GtpClient {
         super.disconnect();
         if (mProcess != null) {
             mProcess.destroy();
+            Log.e(TAG, "Program Disconnect");
         }
-        Log.e(TAG, "Program Disconnect");
     }
 }
