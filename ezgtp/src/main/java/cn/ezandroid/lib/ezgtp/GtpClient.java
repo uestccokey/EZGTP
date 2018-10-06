@@ -23,6 +23,8 @@ public abstract class GtpClient {
     private final GtpLogQueue<Pair<String, Integer>> mLogQueue = new GtpLogQueue<>(256);
     private GtpLogListener mLogListener;
 
+    private GtpMessageParser mMessageParser;
+
     public void setGtpLogListener(GtpLogListener logListener) {
         mLogListener = logListener;
     }
@@ -40,6 +42,16 @@ public abstract class GtpClient {
     protected void notifyLogUpdated() {
         if (mLogListener != null) {
             mLogListener.onGtpLogUpdated(this, mLogQueue);
+        }
+    }
+
+    public void setGtpMessageParser(GtpMessageParser messageParser) {
+        mMessageParser = messageParser;
+    }
+
+    protected void parseMessage(String log) {
+        if (mMessageParser != null) {
+            mMessageParser.parse(log);
         }
     }
 
@@ -73,6 +85,7 @@ public abstract class GtpClient {
      */
     public void disconnect() {
         mLogListener = null;
+        mMessageParser = null;
     }
 
     public static boolean success(String response) {

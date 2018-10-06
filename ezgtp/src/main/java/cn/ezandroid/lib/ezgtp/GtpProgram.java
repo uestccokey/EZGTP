@@ -58,6 +58,9 @@ public abstract class GtpProgram extends GtpClient {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Log.e(TAG, ": " + line);
+                    addLog(new Pair<>(line, GtpLogListener.TYPE_MESSAGE));
+                    notifyLogUpdated();
+                    parseMessage(line);
                     if (Thread.currentThread().isInterrupted()) {
                         return;
                     }
@@ -114,20 +117,6 @@ public abstract class GtpProgram extends GtpClient {
         super.disconnect();
         if (mProcess != null) {
             mProcess.destroy();
-        }
-        if (mReader != null) {
-            try {
-                mReader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if (mWriter != null) {
-            try {
-                mWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         Log.e(TAG, "Program Disconnect");
     }

@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         @Override
         public void run() {
             StringBuilder sb = new StringBuilder();
-            synchronized (mBlackHuman.getLogQueue()) {
-                GtpLogQueue<Pair<String, Integer>> logQueue = mBlackHuman.getLogQueue();
+            synchronized (mWhiteLeela.getLogQueue()) {
+                GtpLogQueue<Pair<String, Integer>> logQueue = mWhiteLeela.getLogQueue();
                 for (Pair<String, Integer> log : logQueue) {
                     if (log.second == GtpLogListener.TYPE_REQUEST) {
                         sb.append("\n").append("$").append(log.first);
@@ -123,8 +123,8 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
         });
 
         mBlackHuman = new GtpHuman();
-        mBlackHuman.setGtpLogListener((gtpClient, logQueue) -> updateLog());
         mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
+        mWhiteLeela.setGtpLogListener((gtpClient, logQueue) -> updateLog());
         mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
         mGtpGame.setGtpListener(MainActivity.this);
         mGtpGame.start();
@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements GtpListener {
     }
 
     private void updateLog() {
-        Log.e("Main", "updateLog:" + (System.currentTimeMillis() - mLastUpdateLogTime));
         mUpdateLogHandler.removeCallbacks(mUpdateLogRunnable);
         if (System.currentTimeMillis() - mLastUpdateLogTime < UPDATE_LOG_DELAY) {
             mUpdateLogHandler.postDelayed(mUpdateLogRunnable, System.currentTimeMillis() - mLastUpdateLogTime);
