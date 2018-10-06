@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements GtpGameListener, 
         mWhiteLeela = new LeelaZeroProgram(MainActivity.this);
         mWhiteLeela.setGtpLogListener((gtpClient, logQueue) -> updateLog());
         mWhiteLeela.setGtpClientListener(this);
-        mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela);
+        mGtpGame = new GtpGame(mBlackHuman, mWhiteLeela, true);
         mGtpGame.setGtpGameListener(MainActivity.this);
         mGtpGame.start();
 

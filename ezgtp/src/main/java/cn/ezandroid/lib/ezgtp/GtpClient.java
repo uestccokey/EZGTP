@@ -50,13 +50,13 @@ public abstract class GtpClient {
         mClientListener = clientListener;
     }
 
-    void onPlayMove(Point move, boolean isBlack) {
+    public void onPlayMove(Point move, boolean isBlack) {
         if (mClientListener != null) {
             mClientListener.onPlayMove(move, isBlack);
         }
     }
 
-    void onGenMove(Point move, boolean isBlack) {
+    public void onGenMove(Point move, boolean isBlack) {
         if (mClientListener != null) {
             mClientListener.onGenMove(move, isBlack);
         }

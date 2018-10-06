@@ -58,7 +58,7 @@ public class TwoGtpActivity extends AppCompatActivity implements GtpGameListener
         mBlackLeela = new LeelaZeroProgram(this);
         mWhiteLeela = new LeelaZeroProgram(this);
         mWhiteLeela.setGtpClientListener(this);
-        mGtpGame = new GtpGame(mBlackLeela, mWhiteLeela);
+        mGtpGame = new GtpGame(mBlackLeela, mWhiteLeela, true);
         mGtpGame.setGtpGameListener(this);
         mGtpGame.start();
     }

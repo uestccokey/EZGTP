@@ -20,11 +20,14 @@ public class GtpGame {
 
     private GtpGameListener mGtpGameListener;
 
+    private boolean mIsBlackFirstPlay; // 一般黑棋先走，让子时则白棋先走
+
     private final Object mPauseLock = new Object();
 
-    public GtpGame(GtpClient blackClient, GtpClient whiteClient) {
+    public GtpGame(GtpClient blackClient, GtpClient whiteClient, boolean isBlackFirstPlay) {
         mBlackClient = blackClient;
         mWhiteClient = whiteClient;
+        mIsBlackFirstPlay = isBlackFirstPlay;
     }
 
     public void setGtpGameListener(GtpGameListener listener) {
@@ -76,45 +79,68 @@ public class GtpGame {
                         return;
                     }
                 }
+
                 Point bMove = null;
                 Point wMove = null;
                 while (mIsRunning) {
-                    checkLock();
-
-                    if (wMove != null) {
-                        mBlackClient.playMove(wMove, false);
-
-                        checkLock();
-
-                        mBlackClient.onPlayMove(wMove, false);
-                    }
-                    if (!isResign(wMove)) {
-                        bMove = mBlackClient.genMove(true);
-
-                        checkLock();
-
-                        mBlackClient.onGenMove(bMove, true);
-                    }
-
-                    checkLock();
-
-                    if (bMove != null) {
-                        mWhiteClient.playMove(bMove, true);
-
-                        checkLock();
-
-                        mWhiteClient.onPlayMove(bMove, true);
-                    }
-                    if (!isResign(bMove)) {
-                        wMove = mWhiteClient.genMove(false);
-
-                        checkLock();
-
-                        mWhiteClient.onGenMove(wMove, false);
+                    if (mIsBlackFirstPlay) {
+                        bMove = doBlackClient(wMove);
+                        wMove = doWhiteClient(bMove);
+                    } else {
+                        wMove = doWhiteClient(bMove);
+                        bMove = doBlackClient(wMove);
                     }
                 }
             }
         }.start();
+    }
+
+    private Point doBlackClient(Point wMove) {
+        checkLock();
+
+        if (wMove != null) {
+            mBlackClient.playMove(wMove, false);
+
+            checkLock();
+
+            mBlackClient.onPlayMove(wMove, false);
+        }
+
+        checkLock();
+
+        Point bMove = null;
+        if (!isResign(wMove)) {
+            bMove = mBlackClient.genMove(true);
+
+            checkLock();
+
+            mBlackClient.onGenMove(bMove, true);
+        }
+        return bMove;
+    }
+
+    private Point doWhiteClient(Point bMove) {
+        checkLock();
+
+        if (bMove != null) {
+            mWhiteClient.playMove(bMove, true);
+
+            checkLock();
+
+            mWhiteClient.onPlayMove(bMove, true);
+        }
+
+        checkLock();
+
+        Point wMove = null;
+        if (!isResign(bMove)) {
+            wMove = mWhiteClient.genMove(false);
+
+            checkLock();
+
+            mWhiteClient.onGenMove(wMove, false);
+        }
+        return wMove;
     }
 
     private void checkLock() {
