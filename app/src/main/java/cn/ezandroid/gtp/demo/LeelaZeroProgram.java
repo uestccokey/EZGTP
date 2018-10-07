@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import cn.ezandroid.lib.ezgtp.GtpProgram;
+import cn.ezandroid.lib.gtp.GtpProgram;
 
 /**
  * 里拉引擎

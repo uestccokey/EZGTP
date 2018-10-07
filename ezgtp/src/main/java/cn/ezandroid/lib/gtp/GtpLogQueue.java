@@ -1,4 +1,4 @@
-package cn.ezandroid.lib.ezgtp;
+package cn.ezandroid.lib.gtp;
 
 import java.util.Collection;
 import java.util.Iterator;

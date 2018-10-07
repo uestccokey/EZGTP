@@ -1,4 +1,4 @@
-package cn.ezandroid.lib.ezgtp;
+package cn.ezandroid.lib.gtp;
 
 /**
  * Gtp消息解析器

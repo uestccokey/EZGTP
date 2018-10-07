@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import cn.ezandroid.lib.ezgtp.GtpUtil;
+import cn.ezandroid.lib.gtp.GtpUtil;
 import cn.ezandroid.lib.sgf.Point;
 import cn.ezandroid.lib.sgf.SGFException;
 import cn.ezandroid.lib.sgf.SGFGame;

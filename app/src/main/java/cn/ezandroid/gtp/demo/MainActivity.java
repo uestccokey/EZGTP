@@ -21,13 +21,13 @@ import cn.ezandroid.lib.board.StoneColor;
 import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
-import cn.ezandroid.lib.ezgtp.GtpClientListener;
-import cn.ezandroid.lib.ezgtp.GtpGame;
-import cn.ezandroid.lib.ezgtp.GtpGameListener;
-import cn.ezandroid.lib.ezgtp.GtpHuman;
-import cn.ezandroid.lib.ezgtp.GtpLogListener;
-import cn.ezandroid.lib.ezgtp.GtpLogQueue;
-import cn.ezandroid.lib.ezgtp.GtpUtil;
+import cn.ezandroid.lib.gtp.GtpClientListener;
+import cn.ezandroid.lib.gtp.GtpGame;
+import cn.ezandroid.lib.gtp.GtpGameListener;
+import cn.ezandroid.lib.gtp.GtpHuman;
+import cn.ezandroid.lib.gtp.GtpLogListener;
+import cn.ezandroid.lib.gtp.GtpLogQueue;
+import cn.ezandroid.lib.gtp.GtpUtil;
 
 public class MainActivity extends AppCompatActivity implements GtpGameListener, GtpClientListener {
 

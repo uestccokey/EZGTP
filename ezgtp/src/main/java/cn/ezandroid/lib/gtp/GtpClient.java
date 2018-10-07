@@ -1,4 +1,4 @@
-package cn.ezandroid.lib.ezgtp;
+package cn.ezandroid.lib.gtp;
 
 import android.graphics.Point;
 import android.text.TextUtils;

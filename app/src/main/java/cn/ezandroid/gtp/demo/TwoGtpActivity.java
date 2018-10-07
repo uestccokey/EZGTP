@@ -13,10 +13,10 @@ import cn.ezandroid.lib.board.StoneColor;
 import cn.ezandroid.lib.board.sound.SoundManager;
 import cn.ezandroid.lib.board.theme.GoTheme;
 import cn.ezandroid.lib.board.theme.WoodTheme;
-import cn.ezandroid.lib.ezgtp.GtpClientListener;
-import cn.ezandroid.lib.ezgtp.GtpGame;
-import cn.ezandroid.lib.ezgtp.GtpGameListener;
-import cn.ezandroid.lib.ezgtp.GtpUtil;
+import cn.ezandroid.lib.gtp.GtpClientListener;
+import cn.ezandroid.lib.gtp.GtpGame;
+import cn.ezandroid.lib.gtp.GtpGameListener;
+import cn.ezandroid.lib.gtp.GtpUtil;
 
 /**
  * TwoGtpActivity
